@@ -21,6 +21,7 @@ float Kp = 0.055, Kd = 0.90, Ki = 0.00005;  // 2000RPM motorlar i√ßin daha yumu≈
 int sensormin[8]; int sensormax[8]; int SVal[8]; int SValx[8];
 int sagmotorpwm = 0; int solmotorpwm = 0; int sonhata = 0; byte cizgivar;
 unsigned int pozisyon = 3500; int integral = 0; int hata = 0; int sondeger = 0;
+bool robotDurdu = false;
 
 void setup() {
   pinMode(MZ80, INPUT_PULLUP);
@@ -46,6 +47,7 @@ void setup() {
 
 void loop() {
   engelKontrol();
+  if (robotDurdu) return;
   pozisyon = sensoroku();
   PIDhesap();
   motorkontrol(solmotorpwm, sagmotorpwm);
