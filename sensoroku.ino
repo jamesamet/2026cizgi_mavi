@@ -1,51 +1,69 @@
-int sensoroku() {
-  unsigned long ortalama = 0;
-  unsigned int toplam = 0;
-  cizgivar = 0;
-  gorensensor = 0;
-
-  for (int i = 0; i < 8; i++) {
-    int minmaksfark = sensormax[i] - sensormin[i];
-    long int hesaplama = analogRead(i) - sensormin[i];
-    hesaplama = hesaplama * 1000;
-    hesaplama = hesaplama / minmaksfark;
-    SVal[i] = constrain(hesaplama, 0, 1000);
-    SValx[i] = 1000 - SVal[i];
-  }
-
-  for (int i = 0; i < 8; i++) {
-    if (SValx[i] > 250)  {
-      cizgivar = 1;
-      gorensensor++;
-    }
-    if (SValx[i] > 100) {
-      ortalama += SValx[i] * i ;
-      toplam += SValx[i];
-    }
-  }
-
-  if (cizgivar == 0) {
-    if (sondeger < 3250)  return 0;
-    if (sondeger > 3750)  return 7000;
-    if (sondeger > 3250 && sondeger < 3750) return 3500;
-  }
-
-  ortalama = ortalama * 1000;
-  sondeger = ortalama / toplam;
-  return sondeger;
-}
-
-void degerokuma() {
-   Serial.begin(9600);
-  while(1){
-    sensoroku();
-  for (int i = 0; i < 8; i++) {
-    Serial.print(i);
-    Serial.print("=");
-    Serial.print(SVal[i]);
-    Serial.print("  ");
-  }
-Serial.println("  ");
-  delay(500);
-  }
-}
+diff --git a/sensoroku.ino b/sensoroku.ino
+index 797403690c541efc29b3dc4beabee756ced685b0..04f511e04ba5e120ced4484b44c270f8c8d809fc 100644
+--- a/sensoroku.ino
++++ b/sensoroku.ino
+@@ -1,51 +1,54 @@
+ int sensoroku() {
+   unsigned long ortalama = 0;
+   unsigned int toplam = 0;
+   cizgivar = 0;
+   gorensensor = 0;
+ 
+-  for (int i = 0; i < 8; i++) {
+-    int minmaksfark = sensormax[i] - sensormin[i];
+-    long int hesaplama = analogRead(i) - sensormin[i];
+-    hesaplama = hesaplama * 1000;
+-    hesaplama = hesaplama / minmaksfark;
++  for (int i = 0; i < 8; i++) {
++    int minmaksfark = sensormax[i] - sensormin[i];
++    if (minmaksfark < 1) minmaksfark = 1; // sıfıra bölme koruması
++    long int hesaplama = analogRead(i) - sensormin[i];
++    hesaplama = hesaplama * 1000;
++    hesaplama = hesaplama / minmaksfark;
+     SVal[i] = constrain(hesaplama, 0, 1000);
+     SValx[i] = 1000 - SVal[i];
+   }
+ 
+   for (int i = 0; i < 8; i++) {
+     if (SValx[i] > 250)  {
+       cizgivar = 1;
+       gorensensor++;
+     }
+     if (SValx[i] > 100) {
+       ortalama += SValx[i] * i ;
+       toplam += SValx[i];
+     }
+   }
+ 
+   if (cizgivar == 0) {
+     if (sondeger < 3250)  return 0;
+     if (sondeger > 3750)  return 7000;
+     if (sondeger > 3250 && sondeger < 3750) return 3500;
+-  }
+-
+-  ortalama = ortalama * 1000;
+-  sondeger = ortalama / toplam;
+-  return sondeger;
++  }
++
++  if (toplam == 0) return sondeger;
++
++  ortalama = ortalama * 1000;
++  sondeger = ortalama / toplam;
++  return sondeger;
+ }
+ 
+ void degerokuma() {
+    Serial.begin(9600);
+   while(1){
+     sensoroku();
+   for (int i = 0; i < 8; i++) {
+     Serial.print(i);
+     Serial.print("=");
+     Serial.print(SVal[i]);
+     Serial.print("  ");
+   }
+ Serial.println("  ");
+   delay(500);
+   }
+ }
