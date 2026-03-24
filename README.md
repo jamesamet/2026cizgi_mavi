@@ -9,3 +9,4 @@ meb yeni robotu.
 - Kart bağlantınızda sürücülerin EN/STBY pinleri farklıysa `TemelCizgi2026.ino` içindeki pin numaralarını güncelleyin.
 - Motor sürüşünde ani PWM sıçramasını engelleyen rampa limiti eklendi.
 - Sensör okuma bölümüne sıfıra bölme koruması eklendi.
+- Engel algılama, 100ms doğrulama ile yapılıp yarış bitiminde robot kalıcı olarak güvenli şekilde durduruluyor.
